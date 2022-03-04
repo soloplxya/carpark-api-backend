@@ -1,16 +1,26 @@
 require("dotenv").config();
 require("./config/db").connect();
+
+
+// Constants
 const auth = require("./middleware/auth");
+const axios = require("axios")
 const express = require("express");
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken")
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone') 
+const dayjs = require("dayjs")
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-// Logic goes here
+
 const User = require("./models/user");
 
 // Register Endpoint
@@ -59,11 +69,10 @@ app.post("/register", async (req, res) => {
       } catch (err) {
         console.log(err);
       }
-      // Our register logic ends here
 });
 
 
-// Login
+// Login Endpoint
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -95,14 +104,32 @@ app.post("/login", async (req, res) => {
 });
 
 
-// Get User Details 
+// Get User Details Endpoint
 app.get("/viewMemberDetails", auth, async (req, res) => {
-   const userEmail = req.user.email
-   const member = await User.findOne({userEmail})
+   const userEmail = req.user.email;
+   const member = await User.findOne({userEmail});
 
    // exclude returning the password
-   const {_id, first_name, last_name, email, password, contact_number, __v} = member 
-   res.json({ first_name, last_name, email, contact_number })
+   const {_id, first_name, last_name, email, password, contact_number, __v} = member;
+   res.json({ first_name, last_name, email, contact_number });
 });
+
+
+// Get Carpark API Details Endpoint 
+// TODO: pull the carpark details every minute -> need some timer
+app.get("/carparkDetails", auth, async (req, res) => {
+    dayjs.tz.setDefault("Singapore");
+    var now = dayjs().format('YYYY-MM-DD[T]HH:mm:ss');
+    var CARPARK_URI = process.env.CARPARK_URI;
+
+    // connect to the carpark endpoint
+    axios.get(CARPARK_URI + `?date_time=${now}`)
+         .then(response => {
+            res.json(response.data);
+         })
+         .catch(error => {
+           console.log(error);
+         })
+})
 
 module.exports = app;
