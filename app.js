@@ -86,8 +86,6 @@ app.post("/login", async (req, res) => {
       );
 
       user.token = token;
-      res.setHeader('Authentication', token)
-      res.setHeader("x-access-token", token)
       res.status(200).json(user);
     }
     res.status(400).send("Invalid Credentials");
@@ -96,8 +94,15 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.post("/welcome", auth, (req, res) => {
-  res.status(200).send("test");
+
+// Get User Details 
+app.get("/viewMemberDetails", auth, async (req, res) => {
+   const userEmail = req.user.email
+   const member = await User.findOne({userEmail})
+
+   // exclude returning the password
+   const {_id, first_name, last_name, email, password, contact_number, __v} = member 
+   res.json({ first_name, last_name, email, contact_number })
 });
 
 module.exports = app;
