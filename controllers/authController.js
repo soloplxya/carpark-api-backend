@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
         }
     
 
-        const oldUser = await User.findOne({ email });
+        const oldUser = await User.findOne({ "email": email });
     
         if (oldUser) {
           return res.status(409).send("User Already Exists. Please Login.");
@@ -65,7 +65,7 @@ exports.login = async (req, res) => {
         res.status(400).send("All input is required");
       }
     
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ "email": email });
   
       if (user && (await bcrypt.compare(password, user.password))) {
         const token = jwt.sign(

@@ -10,8 +10,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 exports.userDetails = async (req, res) => {
+    console.log(req.user.email)
     const userEmail = req.user.email;
-    const member = await User.findOne({userEmail});
+    const member = await User.findOne({'email': userEmail});
+    console.log(member)
  
     // exclude password, __id and __v
     const {_id, first_name, last_name, email, password, contact_number, __v} = member;
