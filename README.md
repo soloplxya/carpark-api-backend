@@ -8,14 +8,23 @@
 
 # Available Endpoints 
 
-#### Non protected routes
-1. `register` : Registers a user to the carpark availability checking system 
-2. `login` : Authenticates and logs the user into the account 
+**Non protected routes**
 
-#### Protected routes 
-1. `viewMemberDetails`: View current user's details 
-2. `carparkDetails`: Returns carpark availability based on current timestamp
+_When testing on postman, include this key-value pair in the headers: 
+`Content-Type: application/json`_
+1. `register` : Registers a user to the carpark availability checking system [POST]
+2. `login` : Authenticates and logs the user into the account [POST]
+
+
+
+**Protected routes**
+
+_When testing on postman, include this key-value pair in the headers: `x-access-token: $token`_
+1. `viewMemberDetails`: View current user's details [GET]
+2. `carparkDetails`: Returns carpark availability based on current timestamp [GET]
 
 To test any of the endpoints above, install [postman](https://www.postman.com/downloads/) on your desktop. 
  
 
+# API url path 
+[`http://localhost:4001/api/v1/users`](http://localhost:4001/api/v1/users)
